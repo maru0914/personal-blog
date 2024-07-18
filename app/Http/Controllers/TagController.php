@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class CategoryController extends Controller
+class TagController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('category.index', [
-            'categories' => Category::paginate()
+        return view('tag.index', [
+            'tags' => Tag::paginate()
         ]);
     }
 
@@ -24,49 +25,49 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|max:20|unique:categories,name'
+            'name' => 'required|max:20|unique:tags,name'
         ]);
 
-        Category::create($validated);
+        Tag::create($validated);
 
-        return redirect(route('categories.index'));
+        return redirect(route('tags.index'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(Tag $tag)
     {
-        return view('category.edit', [
-            'category' => $category
+        return view('tag.edit', [
+            'tag' => $tag
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, Tag $tag)
     {
         $validated = $request->validate([
             'name' => [
                 'required',
                 'max:20',
-                Rule::unique('categories', 'name')->ignore($category->id)
+                Rule::unique('tags', 'name')->ignore($tag->id)
             ],
         ]);
 
-        $category->update($validated);
+        $tag->update($validated);
 
-        return redirect(route('categories.index'));
+        return redirect(route('tags.index'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(Tag $tag)
     {
-        $category->delete();
+        $tag->delete();
 
-        return redirect(route('categories.index'));
+        return redirect(route('tags.index'));
     }
 }

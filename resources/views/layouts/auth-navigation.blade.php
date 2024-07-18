@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                         {{ __('Categories') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
+                        {{ __('Tags') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -49,11 +52,14 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.index')">
+            <x-responsive-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.*')">
                 {{ __('Articles') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.index')">
+            <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                 {{ __('Categories') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
+                {{ __('Tags') }}
             </x-responsive-nav-link>
         </div>
 
