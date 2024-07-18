@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/articles', 301);
 Route::resource('/articles', ArticleController::class)->only('index', 'show');
 
+Route::view('/about', 'about')->name('about');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
