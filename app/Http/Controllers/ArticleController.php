@@ -38,7 +38,7 @@ class ArticleController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'tags.*' => 'exists:tags,id',
-            'title' => 'required|max:20|unique:articles,title',
+            'title' => 'required|max:100|unique:articles,title',
             'body' => 'required|max:5000',
             'image' => [
                 'image',
@@ -90,7 +90,7 @@ class ArticleController extends Controller
             'tags.*' => 'exists:tags,id',
             'title' => [
                 'required',
-                'max:20',
+                'max:100',
                 Rule::unique('articles', 'title')->ignore($article->id),
             ],
             'body' => 'required|max:5000',
