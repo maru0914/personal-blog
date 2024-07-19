@@ -1,18 +1,22 @@
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {{ __('New Article') }}
+            {{ __('Edit Article') }}
         </h2>
     </header>
 
-    <form method="post" enctype="multipart/form-data" action="{{ route('articles.store') }}" class="mt-6 space-y-6">
+    <form method="post" enctype="multipart/form-data" action="{{ route('articles.update', $article) }}" class="mt-6 space-y-6">
         @csrf
+        @method('patch')
 
         <div>
             <x-input-label for="category" :value="__('Category')" />
             <select id="category" name="category_id" class="mt-1  border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                 @foreach($categories as $category)
-                    <option value="{{ $category->id }}">
+                    <option
+                        value="{{ $category->id }}"
+                        @selected(old('category_id', $article->category->id) == $category->id)
+                    >
                         {{ $category->name }}
                     </option>
                 @endforeach
@@ -23,7 +27,10 @@
             <fieldset>
                 <legend>Tags</legend>
                 @foreach($tags as $tag)
-                    <input id="{{ $tag->name }}" type="checkbox" name="tags[]" value="{{ $tag->id }}">
+                    <input id="{{ $tag->name }}"
+                           type="checkbox" name="tags[]"
+                           value="{{ $tag->id }}"
+                           @checked( in_array($tag->id, old('tags', $article->tags->pluck('id')->toArray() ?? []))) />
                     <x-input-label class="inline" :for="$tag->name" :value="$tag->name" />
                 @endforeach
             </fieldset>
@@ -33,13 +40,13 @@
 
         <div>
             <x-input-label for="title" :value="__('Title')" />
-            <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title')" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title', $article->title)" required autofocus autocomplete="name" />
+            <x-input-error class="mt-2" :messages="$errors->get('title')" />
         </div>
 
         <div>
             <x-input-label for="body" :value="__('Body')" />
-            <textarea name="body" id="body" rows="30" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('body') }}</textarea>
+            <textarea name="body" id="body" rows="30" class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('body', $article->body) }}</textarea>
             <x-input-error class="mt-2" :messages="$errors->get('body')" />
         </div>
 
@@ -50,7 +57,7 @@
         </div>
 
         <div class="flex justify-end">
-            <x-primary-button>{{ __('Add') }}</x-primary-button>
+            <x-primary-button>{{ __('Update') }}</x-primary-button>
         </div>
     </form>
 </section>

@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ArticleController extends Controller
@@ -40,7 +41,6 @@ class ArticleController extends Controller
             'title' => 'required|max:20|unique:articles,title',
             'body' => 'required|max:5000',
             'image' => [
-                'required',
                 'image',
                 Rule::dimensions()->maxWidth(2000)->maxHeight(2000)->minHeight(100)->minHeight(100),
             ],
@@ -48,7 +48,11 @@ class ArticleController extends Controller
 
         DB::transaction(function () use ($request, $validated) {
             $article = Article::create($validated);
-            $request->file('image')->store('articles');
+
+            if ($request->file('image')) {
+                $path = $request->file('image')->store('articles');
+                $article->update(['image_path' => $path]);
+            }
 
             if ($request->tags) {
                 $article->tags()->attach($request->tags);
@@ -70,13 +74,46 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        //
+        return view('article.edit', [
+            'article' => $article,
+            'categories' => Category::all(),
+            'tags' => Tag::all(),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Article $article) {}
+    public function update(Request $request, Article $article) {
+        $validated = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'tags.*' => 'exists:tags,id',
+            'title' => [
+                'required',
+                'max:20',
+                Rule::unique('articles', 'title')->ignore($article->id),
+            ],
+            'body' => 'required|max:5000',
+            'image' => [
+                'image',
+                Rule::dimensions()->maxWidth(2000)->maxHeight(2000)->minHeight(100)->minHeight(100),
+            ],
+        ]);
+
+        DB::transaction(function () use ($request, $article, $validated) {
+            if ($request->file('image')) {
+                $path = $request->file('image')->store('articles');
+                if ($article->image_path) {
+                    Storage::delete($article->image_path);
+                }
+                $article->update(['image_path' => $path]);
+            }
+            $article->update($validated);
+            $article->tags()->sync($request->tags);
+        });
+
+        return redirect(route('articles.index'));
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -85,6 +122,6 @@ class ArticleController extends Controller
     {
         $article->delete();
 
-        return redirect()->route('article.index');
+        return redirect()->route('articles.index');
     }
 }
