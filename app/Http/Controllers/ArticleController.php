@@ -15,7 +15,7 @@ class ArticleController extends Controller
     public function index()
     {
         return view('article.index', [
-            'articles' => Article::paginate(),
+            'articles' => Article::with('category', 'tags')->paginate(),
         ]);
     }
 
@@ -64,6 +64,8 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
+        $article->load('category', 'tags');
+
         return view('article.show', [
             'article' => $article,
         ]);
@@ -74,6 +76,8 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
+        $article->load('category', 'tags');
+
         return view('article.edit', [
             'article' => $article,
             'categories' => Category::all(),
