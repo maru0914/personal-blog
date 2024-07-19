@@ -4,6 +4,10 @@ Personal-Blog is a Laravel application that allows sole user to post and manage 
 It features sole user authentication for article creation, editing, and deletion, as well as category and tag management.<br/>
 Visitors can view articles and the "About Me" page without logging in.
 
+## Preview
+![Preview perspnal blog](https://github.com/user-attachments/assets/2aeced55-ddd9-40d3-b683-c6c363383f05)
+
+
 ## Features
 
 - **User Authentication**: Login system for sole user. (You need insert a user by SQL or Seeder)
