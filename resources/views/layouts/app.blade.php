@@ -17,7 +17,7 @@
 <body class="font-sans antialiased">
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
     @auth
-        @include('layouts.auth-navigation')
+        @include('layouts.admin-navigation')
     @else
         @include('layouts.public-navigation')
     @endauth
