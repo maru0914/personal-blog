@@ -49,9 +49,10 @@ class ArticleController extends Controller
         DB::transaction(function () use ($request, $validated) {
             $article = Article::create($validated);
 
-            if ($request->file('image')) {
-                $path = $request->file('image')->store('articles');
-                $article->update(['image_path' => $path]);
+            if ($request->hasFile('image')) {
+                $article->update([
+                    'image_path' => $request->file('image')->store('articles')
+                ]);
             }
 
             if ($request->tags) {
@@ -105,12 +106,13 @@ class ArticleController extends Controller
         ]);
 
         DB::transaction(function () use ($request, $article, $validated) {
-            if ($request->file('image')) {
-                $path = $request->file('image')->store('articles');
+            if ($request->hasFile('image')) {
                 if ($article->image_path) {
                     Storage::delete($article->image_path);
                 }
-                $article->update(['image_path' => $path]);
+                $article->update([
+                    'image_path' => $request->file('image')->store('articles')
+                ]);
             }
             $article->update($validated);
             $article->tags()->sync($request->tags);
